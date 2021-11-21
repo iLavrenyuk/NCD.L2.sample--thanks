@@ -1,5 +1,7 @@
-import "./App.css";
+import './App.css';
+import React from 'react';
+import { HomePage } from './pages/HomePage';
 
 export const App = () => {
-  return <div>Sample Thanks</div>;
+  return <HomePage />;
 };
