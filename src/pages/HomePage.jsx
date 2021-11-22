@@ -52,7 +52,12 @@ export const HomePage = () => {
 
           <div className="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <info />
-            {/* <message-form :recipients='recipients' :isRecipientsLoaded='isRecipientsLoaded'  :sendMessage='sendMessage' :transferFunds='transferFunds'/> */}
+            <message-form
+              recipients="recipients"
+              isRecipientsLoaded="isRecipientsLoaded"
+              sendMessage="sendMessage"
+              transferFunds="transferFunds"
+            />
           </div>
 
           <svg
