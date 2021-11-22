@@ -6,11 +6,11 @@ export const Login = () => {
       <div v-if="accountId">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center h-12 w-36 rounded-md bg-indigo-500 text-white mx-2">
-            {/* <UserIcon class="w-6 h-6 text-black-500" /> */}
+            {/* <UserIcon className="w-6 h-6 text-black-500" /> */}
             <h4 className="mr-2">id-1234</h4>
           </div>
           <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-2">
-            {/* <LogoutIcon class="w-6 h-6 text-black-500" click="signOut" /> */}
+            {/* <LogoutIcon className="w-6 h-6 text-black-500" click="signOut" /> */}
           </div>
         </div>
       </div>
