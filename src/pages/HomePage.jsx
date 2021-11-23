@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Info } from '../components/Info';
 import { Login } from '../components/Login';
 import { Header } from '../components/Header/index';
+import { useRecipients } from '../hooks/useRecipients';
+import { MessageForm } from '../components/MessageForm';
 import { LearnSection } from '../components/LearnSection';
+import { mockDonatesHistory } from '../constants/mockData';
 import { MessageHistory } from '../components/MessageHistory';
 
 export const HomePage = () => {
+  const [user, setUser] = useState();
+
+  const { recipients, messages, sendMessage, transferFunds } = useRecipients();
+
   return (
     <>
       <div id="nav" className="py-4 p-0 flex justify-end">
         <div className="flex w-1/2 justify-end items-center list-none">
-          <Login />
+          <Login user={user} setUser={setUser} />
         </div>
       </div>
       <div className="py-16 bg-gray-50 overflow-hidden lg:py-24">
@@ -31,32 +39,23 @@ export const HomePage = () => {
                 height="20"
                 patternUnits="userSpaceOnUse"
               >
-                <rect
-                  x="0"
-                  y="0"
-                  width="4"
-                  height="4"
-                  className="text-gray-200"
-                  fill="currentColor"
-                />
+                <rect x="0" y="0" width="4" height="4" className="text-gray-200" fill="currentColor" />
               </pattern>
             </defs>
-            <rect
-              width="404"
-              height="784"
-              fill="url(#b1e6e422-73f8-40a6-b5d9-c8586e37e0e7)"
-            />
+            <rect width="404" height="784" fill="url(#b1e6e422-73f8-40a6-b5d9-c8586e37e0e7)" />
           </svg>
 
           <Header />
 
           <div className="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-            <info />
-            <message-form
-              recipients="recipients"
-              isRecipientsLoaded="isRecipientsLoaded"
-              sendMessage="sendMessage"
-              transferFunds="transferFunds"
+            <Info />
+            <MessageForm
+              recipients={recipients?.map((recipient) => ({
+                label: recipient,
+                value: recipient,
+              }))}
+              sendMessage={sendMessage}
+              transferFunds={transferFunds}
             />
           </div>
 
@@ -77,28 +76,16 @@ export const HomePage = () => {
                 height="20"
                 patternUnits="userSpaceOnUse"
               >
-                <rect
-                  x="0"
-                  y="0"
-                  width="4"
-                  height="4"
-                  className="text-gray-200"
-                  fill="currentColor"
-                />
+                <rect x="0" y="0" width="4" height="4" className="text-gray-200" fill="currentColor" />
               </pattern>
             </defs>
-            <rect
-              width="404"
-              height="784"
-              fill="url(#64e643ad-2176-4f86-b3d7-f2c5da3b6a6d)"
-            />
+            <rect width="404" height="784" fill="url(#64e643ad-2176-4f86-b3d7-f2c5da3b6a6d)" />
           </svg>
 
           <div className="relative mt-12 sm:mt-16 lg:mt-24">
             <div className="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:gap-8 lg:items-center">
               <LearnSection />
-              <MessageHistory accountId="id1234" />
-              {/* <MessageHistory v-else:messages="history" /> */}
+              {messages ? <MessageHistory messages={messages} /> : <MessageHistory messages={mockDonatesHistory} />}
             </div>
           </div>
         </div>
