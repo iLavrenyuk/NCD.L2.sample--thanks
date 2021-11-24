@@ -7,8 +7,8 @@ export const Header = () => {
         A better way to say "Thanks!"
       </h2>
       <p className="mt-4 max-w-3xl mx-auto text-center text-xl text-gray-500">
-        This application lets you say thanks on the blockchain. That means it's
-        permanent, verifiable, and even comes with tips built-in
+        This application lets you say thanks on the blockchain. That means it's permanent, verifiable, and even comes
+        with tips built-in
       </p>
     </div>
   );

@@ -22,12 +22,6 @@ export const MessageForm = ({ recipients, sendMessage, transferFunds }) => {
     transferFunds();
   };
 
-  console.log({
-    message,
-    anonymous,
-    attachedDeposit,
-  });
-
   return (
     <>
       <div className="shadow overflow-hidden sm:rounded-md">
