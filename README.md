@@ -1,4 +1,26 @@
-# Getting Started with Create React App
+# **How to generate CONTRACT_ID and REGISTRY_CONTRACT_ID:**
+```
+$ git clone https://github.com/Learn-NEAR/NCD.L1.sample--thanks
+$ git checkout origin/registry
+$ npm i -g near-cli
+$ near login
+$ export OWNER
+$ scripts/registry/1.dev-deploy.sh
+```
+Save your registry id like REGISTRY_CONTRACT_ID='dev-1638300154069-33538233910216'
+```
+$ scripts/thanks/1.dev-deploy.sh
+```
+Save your contract id like REGISTRY_CONTRACT_ID='dev-1638305926916-43326219336149'
+```
+$ export REGISTRY='dev-1638300154069-33538233910216'
+$ export CONTRACT='dev-1638305926916-43326219336149'
+$ near call $CONTRACT init '{"owner":"'$OWNER'", "registry":"'$REGISTRY'"}' --accountId $CONTRACT
+```
+Than save your constants CONTRACT_ID and REGISTRY_CONTRACT_ID to .src/services/near.js
+
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
