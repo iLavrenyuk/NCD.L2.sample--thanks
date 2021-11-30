@@ -85,7 +85,11 @@ export const HomePage = () => {
           <div className="relative mt-12 sm:mt-16 lg:mt-24">
             <div className="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:gap-8 lg:items-center">
               <LearnSection />
-              {messages ? <MessageHistory messages={messages} /> : <MessageHistory messages={mockDonatesHistory} />}
+              {user && messages ? (
+                <MessageHistory messages={messages} />
+              ) : (
+                <MessageHistory messages={mockDonatesHistory} />
+              )}
             </div>
           </div>
         </div>
