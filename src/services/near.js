@@ -1,11 +1,11 @@
 // import BN from 'bn.js';
 import { keyStores, Near, WalletConnection, utils } from 'near-api-js';
 
-export const CONTRACT_ID = 'dev-1634131199153-23397978180139';
-export const REGISTRY_CONTRACT_ID = 'dev-1631276003404-61262416620213';
+export const CONTRACT_ID = 'dev-1638300154069-33538233910216';
+export const REGISTRY_CONTRACT_ID = 'dev-1638300005428-93336340235109';
 // const gas = new BN('70000000000000');
 
-// new NEAR is using  here to  awoid  async/await
+// new NEAR is using  here to  avoid  async/await
 export const near = new Near({
   networkId: 'testnet',
   keyStore: new keyStores.BrowserLocalStorageKeyStore(),
@@ -16,8 +16,8 @@ export const near = new Near({
 export const wallet = new WalletConnection(near, 'thankyou');
 
 //function to get all recipients from registry contract
-export const getRecipients = async () => {
-  return await wallet.account().viewFunction(REGISTRY_CONTRACT_ID, 'list_all');
+export const getRecipients = () => {
+  return wallet.account().viewFunction(REGISTRY_CONTRACT_ID, 'list_all');
 };
 
 //function to get all messages from thankyou contract

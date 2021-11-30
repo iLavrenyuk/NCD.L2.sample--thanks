@@ -10,6 +10,7 @@
 
 # production
 /build
+/NCD.L1.sample--thanks
 
 # misc
 .DS_Store
