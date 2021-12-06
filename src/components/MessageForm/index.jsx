@@ -1,21 +1,31 @@
 import Select from 'react-select';
 import React, { useState } from 'react';
 import { Switch } from '@headlessui/react';
+import { wallet } from '../../services/near';
+import { useContract } from '../../context/ContractsProvider';
 
-export const MessageForm = ({ recipients, sendMessage, transferFunds }) => {
+export const MessageForm = ({ user, recipients, sendMessage, transferFunds }) => {
+  const {
+    data: { contractId },
+  } = useContract();
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [anonymous, setAnonymous] = useState(false);
   const [attachedDeposit, setAttachedDeposit] = useState(0);
 
   const handleSubmit = () => {
-    setLoading(true);
-    sendMessage({
-      message,
-      anonymous,
-      attachedDeposit,
-    });
-    setLoading(false);
+    if (user) {
+      setLoading(true);
+      sendMessage({
+        message,
+        anonymous,
+        attachedDeposit,
+      });
+      setLoading(false);
+    } else {
+      wallet.requestSignIn(contractId);
+    }
   };
 
   const handleTransfer = () => {

@@ -10,15 +10,14 @@ import { MessageHistory } from '../components/MessageHistory';
 
 export const HomePage = () => {
   const [user, setUser] = useState();
+  const [error, setApiError] = useState();
 
-  const { recipients, messages, sendMessage, transferFunds } = useRecipients();
+  const { recipients, messages, sendMessage, transferFunds } = useRecipients({ setApiError });
 
   return (
     <>
-      <div id="nav" className="py-4 p-0 flex justify-end">
-        <div className="flex w-1/2 justify-end items-center list-none">
-          <Login user={user} setUser={setUser} />
-        </div>
+      <div id="nav" className="py-4 p-0">
+        <Login user={user} setUser={setUser} error={error} setApiError={setApiError} />
       </div>
       <div className="py-16 bg-gray-50 overflow-hidden lg:py-24">
         <div className="relative max-w-xl mx-auto px-4 sm:px-6 lg:px-8 lg:max-w-7xl">
@@ -50,6 +49,7 @@ export const HomePage = () => {
           <div className="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <Info />
             <MessageForm
+              user={user}
               recipients={recipients?.map((recipient) => ({
                 label: recipient,
                 value: recipient,

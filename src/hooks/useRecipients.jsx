@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useContract } from '../context/ContractsProvider';
 import { getRecipients, getMessages, transfer, sendMessage } from '../services/near';
 
-export const useRecipients = () => {
+export const useRecipients = ({ setApiError }) => {
+  const {
+    data: { contractId, registryContractId },
+  } = useContract();
+
   const [recipients, setRecipients] = useState();
   const [messages, setMessages] = useState();
-  const [apiError, setApiError] = useState();
 
   const getData = useCallback(async () => {
     try {
@@ -13,7 +17,8 @@ export const useRecipients = () => {
     } catch (e) {
       setApiError(e);
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contractId, registryContractId]);
 
   useEffect(() => {
     getData();
@@ -30,7 +35,6 @@ export const useRecipients = () => {
   return {
     recipients,
     messages,
-    apiError,
     sendMessage: handleSendMessage,
     transferFunds: handleTransfer,
   };
