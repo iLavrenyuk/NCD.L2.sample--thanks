@@ -12,7 +12,7 @@ export const HomePage = () => {
   const [user, setUser] = useState();
   const [error, setApiError] = useState();
 
-  const { recipients, messages, sendMessage, transferFunds } = useRecipients({ setApiError });
+  const { recipients, messages, owner, sendMessage, transferFunds } = useRecipients({ setApiError });
 
   return (
     <>
@@ -48,15 +48,18 @@ export const HomePage = () => {
 
           <div className="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <Info />
-            <MessageForm
-              user={user}
-              recipients={recipients?.map((recipient) => ({
-                label: recipient,
-                value: recipient,
-              }))}
-              sendMessage={sendMessage}
-              transferFunds={transferFunds}
-            />
+            {recipients ? (
+              <MessageForm
+                user={user}
+                recipients={recipients?.map((recipient) => ({
+                  label: recipient,
+                  value: recipient,
+                }))}
+                owner={owner}
+                sendMessage={sendMessage}
+                transferFunds={transferFunds}
+              />
+            ) : null}
           </div>
 
           <svg

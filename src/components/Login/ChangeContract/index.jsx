@@ -36,8 +36,6 @@ export const ChangeContract = ({ error, setApiError, setIsOpenChangeContact }) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contractId]);
 
-  console.log(error);
-
   return (
     <div className="fixed z-50 w-full min-h-screen bg-gray-200 bg-opacity-50 left-0 top-0">
       <div className="flex items-center justify-center w-full h-full pt-44">

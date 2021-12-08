@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useContract } from '../context/ContractsProvider';
-import { getRecipients, getMessages, transfer, sendMessage } from '../services/near';
+import { getRecipients, getMessages, transfer, sendMessage, getOwner } from '../services/near';
 
 export const useRecipients = ({ setApiError }) => {
   const {
@@ -9,11 +9,13 @@ export const useRecipients = ({ setApiError }) => {
 
   const [recipients, setRecipients] = useState();
   const [messages, setMessages] = useState();
+  const [owner, setOwner] = useState();
 
   const getData = useCallback(async () => {
     try {
       setRecipients(await getRecipients());
       setMessages(await getMessages());
+      setOwner(await getOwner());
     } catch (e) {
       setApiError(e);
     }
@@ -24,17 +26,26 @@ export const useRecipients = ({ setApiError }) => {
     getData();
   }, [getData]);
 
-  const handleSendMessage = async ({ message, anonymous, attachedDeposit }) => {
-    sendMessage({ message, anonymous, attachedDeposit });
+  const handleSendMessage = async (values) => {
+    try {
+      return await sendMessage(values);
+    } catch (e) {
+      setApiError(e);
+    }
   };
 
   const handleTransfer = async () => {
-    transfer();
+    try {
+      return await transfer();
+    } catch (e) {
+      setApiError(e);
+    }
   };
 
   return {
     recipients,
     messages,
+    owner,
     sendMessage: handleSendMessage,
     transferFunds: handleTransfer,
   };

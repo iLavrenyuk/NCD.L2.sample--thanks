@@ -4,7 +4,7 @@ import { Switch } from '@headlessui/react';
 import { wallet } from '../../services/near';
 import { useContract } from '../../context/ContractsProvider';
 
-export const MessageForm = ({ user, recipients, sendMessage, transferFunds }) => {
+export const MessageForm = ({ user, recipients, owner, sendMessage, transferFunds }) => {
   const {
     data: { contractId },
   } = useContract();
@@ -13,6 +13,7 @@ export const MessageForm = ({ user, recipients, sendMessage, transferFunds }) =>
   const [message, setMessage] = useState('');
   const [anonymous, setAnonymous] = useState(false);
   const [attachedDeposit, setAttachedDeposit] = useState(0);
+  const [selectItem, setSelectItem] = useState(recipients[0]);
 
   const handleSubmit = () => {
     if (user) {
@@ -28,8 +29,8 @@ export const MessageForm = ({ user, recipients, sendMessage, transferFunds }) =>
     }
   };
 
-  const handleTransfer = () => {
-    transferFunds();
+  const handleTransfer = async () => {
+    await transferFunds();
   };
 
   return (
@@ -44,16 +45,15 @@ export const MessageForm = ({ user, recipients, sendMessage, transferFunds }) =>
 
           <div className="grid grid-cols-6 gap-6">
             <div className="col-span-6">
-              {recipients ? (
-                <Select
-                  className="text-left cursor-pointer"
-                  placeholder="Recipient name"
-                  options={recipients}
-                  defaultValue={recipients[0]}
-                  isSearchable
-                  isClearable
-                />
-              ) : null}
+              <Select
+                className="text-left cursor-pointer"
+                placeholder="Recipient name"
+                options={recipients}
+                value={selectItem}
+                onChange={setSelectItem}
+                isSearchable
+                isClearable
+              />
             </div>
 
             <div className="col-span-6">
@@ -122,14 +122,16 @@ export const MessageForm = ({ user, recipients, sendMessage, transferFunds }) =>
               </button>
             </div>
 
-            <div className="col-span-6 sm:col-span-6 lg:col-span-3">
-              <button
-                onClick={handleTransfer}
-                className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Transfer to owner
-              </button>
-            </div>
+            {owner ? (
+              <div className="col-span-6 sm:col-span-6 lg:col-span-3">
+                <button
+                  onClick={handleTransfer}
+                  className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Transfer to owner
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

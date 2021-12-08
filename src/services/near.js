@@ -25,6 +25,11 @@ export const getMessages = () => {
   return wallet.account().viewFunction(CONTRACT_ID, 'list');
 };
 
+export const getOwner = () => {
+  const CONTRACT_ID = localStorage.getItem('CONTRACT_ID');
+  return wallet.account().viewFunction(CONTRACT_ID, 'get_owner');
+};
+
 //function to transfer funds to  owner
 export const transfer = () => {
   const CONTRACT_ID = localStorage.getItem('CONTRACT_ID');
