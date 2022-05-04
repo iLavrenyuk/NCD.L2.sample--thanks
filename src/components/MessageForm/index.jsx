@@ -7,13 +7,14 @@ import { useContract } from '../../context/ContractsProvider';
 export const MessageForm = ({ user, recipients, owner, sendMessage, transferFunds }) => {
   const {
     data: { contractId },
+    setContracts,
   } = useContract();
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [anonymous, setAnonymous] = useState(false);
   const [attachedDeposit, setAttachedDeposit] = useState(0);
-  const [selectItem, setSelectItem] = useState(recipients[0]);
+  const [selectItem, setSelectItem] = useState(recipients.find((item) => item.value === contractId));
 
   const handleSubmit = () => {
     if (user) {
@@ -33,6 +34,11 @@ export const MessageForm = ({ user, recipients, owner, sendMessage, transferFund
     await transferFunds();
   };
 
+  const handleChange = (e) => {
+    setSelectItem(e);
+    setContracts(e.value);
+  };
+
   return (
     <>
       <div className="shadow overflow-hidden sm:rounded-md">
@@ -50,7 +56,7 @@ export const MessageForm = ({ user, recipients, owner, sendMessage, transferFund
                 placeholder="Recipient name"
                 options={recipients}
                 value={selectItem}
-                onChange={setSelectItem}
+                onChange={handleChange}
                 isSearchable
                 isClearable
               />
@@ -100,7 +106,9 @@ export const MessageForm = ({ user, recipients, owner, sendMessage, transferFund
                 </div>
                 <input
                   type="text"
-                  onChange={(e) => setAttachedDeposit(e.target.value)}
+                  onChange={(e) => setAttachedDeposit(e.target.value.replace(',', '.'))}
+                  onBlur={(e) => setAttachedDeposit(e.target.value > 0 ? (e.target.value < 5 ? e.target.value : 5) : 0)}
+                  value={attachedDeposit}
                   id="tip"
                   className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
                   placeholder="0"
@@ -122,13 +130,13 @@ export const MessageForm = ({ user, recipients, owner, sendMessage, transferFund
               </button>
             </div>
 
-            {owner ? (
+            {owner === user ? (
               <div className="col-span-6 sm:col-span-6 lg:col-span-3">
                 <button
                   onClick={handleTransfer}
                   className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Transfer to owner
+                  Transfer to owner (Me)
                 </button>
               </div>
             ) : null}

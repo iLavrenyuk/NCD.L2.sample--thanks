@@ -18,8 +18,8 @@ export const ContractsProvider = ({ children }) => {
 
   const setContracts = (contractId, registryContractId) => {
     localStorage.setItem('CONTRACT_ID', contractId);
-    localStorage.setItem('REGISTRY_CONTRACT_ID', registryContractId);
-    setData({ registryContractId, contractId });
+    registryContractId && localStorage.setItem('REGISTRY_CONTRACT_ID', registryContractId);
+    setData({ registryContractId: registryContractId || data.registryContractId, contractId });
   };
 
   return <DataContext.Provider value={{ data, setContracts }}>{children}</DataContext.Provider>;
