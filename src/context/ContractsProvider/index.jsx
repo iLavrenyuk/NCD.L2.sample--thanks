@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { wallet } from '../../services/near';
 
 const DataContext = createContext();
 
@@ -16,13 +17,21 @@ export const ContractsProvider = ({ children }) => {
     registryContractId: registryContract ?? defaultRegistryContractId,
   });
 
+  const [user, setUser] = useState();
+
+  const signOut = () => {
+    wallet.signOut();
+    localStorage.removeItem(`near-api-js:keystore:${user}:testnet`);
+    setUser(null);
+  };
+
   const setContracts = (contractId, registryContractId) => {
     localStorage.setItem('CONTRACT_ID', contractId);
     registryContractId && localStorage.setItem('REGISTRY_CONTRACT_ID', registryContractId);
     setData({ registryContractId: registryContractId || data.registryContractId, contractId });
   };
 
-  return <DataContext.Provider value={{ data, setContracts }}>{children}</DataContext.Provider>;
+  return <DataContext.Provider value={{ data, setContracts, user, setUser, signOut }}>{children}</DataContext.Provider>;
 };
 
 export const useContract = () => useContext(DataContext);

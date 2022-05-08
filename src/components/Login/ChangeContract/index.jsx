@@ -17,6 +17,7 @@ export const ChangeContract = ({ error, setApiError, setIsOpenChangeContact }) =
     setContracts(defaultContractId, defaultRegistryContractId);
     setInputRegistryContract(defaultRegistryContractId);
     setInputContract(defaultContractId);
+    setApiError('');
   };
 
   const applyContracts = () => {

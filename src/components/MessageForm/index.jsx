@@ -1,43 +1,90 @@
 import Select from 'react-select';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Button } from '../Button';
 import { Switch } from '@headlessui/react';
-import { wallet } from '../../services/near';
+import { useToasts } from 'react-toast-notifications';
 import { useContract } from '../../context/ContractsProvider';
+import { getSummarize, sendMessage, transfer, wallet } from '../../services/near';
 
-export const MessageForm = ({ user, recipients, owner, sendMessage, transferFunds }) => {
+export const MessageForm = ({ user, recipients, owner }) => {
   const {
     data: { contractId },
     setContracts,
   } = useContract();
 
-  const [loading, setLoading] = useState(false);
+  const { addToast } = useToasts();
+
+  const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [anonymous, setAnonymous] = useState(false);
   const [attachedDeposit, setAttachedDeposit] = useState(0);
+  const [summarize, setSummarize] = useState(null);
   const [selectItem, setSelectItem] = useState(recipients.find((item) => item.value === contractId));
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (user) {
       setLoading(true);
-      sendMessage({
-        message,
-        anonymous,
-        attachedDeposit,
-      });
+      try {
+        await sendMessage({
+          message,
+          anonymous,
+          attachedDeposit: formatDeposit(attachedDeposit),
+        });
+        setMessage('');
+        setAttachedDeposit(0);
+      } catch (error) {
+        const errorMessage = error?.kind?.ExecutionError;
+        addToast(errorMessage.slice(0, errorMessage.match(/, filename/).index), {
+          appearance: 'error',
+          autoDismiss: true,
+          autoDismissTimeout: 30000,
+        });
+      }
       setLoading(false);
     } else {
       wallet.requestSignIn(contractId);
     }
   };
 
+  const formatDeposit = (value) => (value > 0 ? (value < 5 ? parseInt(value) : 5) : 0);
+
   const handleTransfer = async () => {
-    await transferFunds();
+    setLoading(true);
+    try {
+      const res = await transfer();
+      addToast(`Transfer success \n ${res}`, {
+        appearance: 'success',
+        autoDismiss: true,
+        autoDismissTimeout: 30000,
+      });
+    } catch (error) {
+      const errorMessage = error?.kind?.ExecutionError;
+      addToast(errorMessage.slice(0, errorMessage.match(/, filename/).index), {
+        appearance: 'error',
+        autoDismiss: true,
+        autoDismissTimeout: 30000,
+      });
+    }
+    setLoading(false);
   };
 
   const handleChange = (e) => {
     setSelectItem(e);
     setContracts(e.value);
   };
+
+  const getData = async () => {
+    try {
+      const res = await getSummarize();
+      setSummarize(Object.entries(res?.contributions));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    user && owner === user && getData();
+  }, [owner, user]);
 
   return (
     <>
@@ -46,7 +93,9 @@ export const MessageForm = ({ user, recipients, owner, sendMessage, transferFund
           <div className="text-left pb-6">
             <p className="text-lg leading-6 font-medium text-gray-700">Record your message on the blockchain</p>
             <p className="mt-2 text-base text-gray-500">No better way to say "Thanks!" than to make it permanent.</p>
-            <p className="mt-2 text-base text-gray-500">You can do that right here.</p>
+            <p className="Loading your content..." e="mt-2 text-base text-gray-500">
+              You can do that right here.
+            </p>
           </div>
 
           <div className="grid grid-cols-6 gap-6">
@@ -107,7 +156,7 @@ export const MessageForm = ({ user, recipients, owner, sendMessage, transferFund
                 <input
                   type="text"
                   onChange={(e) => setAttachedDeposit(e.target.value.replace(',', '.'))}
-                  onBlur={(e) => setAttachedDeposit(e.target.value > 0 ? (e.target.value < 5 ? e.target.value : 5) : 0)}
+                  onBlur={(e) => setAttachedDeposit(formatDeposit(e.target.value))}
                   value={attachedDeposit}
                   id="tip"
                   className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
@@ -122,28 +171,35 @@ export const MessageForm = ({ user, recipients, owner, sendMessage, transferFund
               </div>
             </div>
             <div className="col-span-6 sm:col-span-6 lg:col-span-3">
-              <button
-                onClick={handleSubmit}
-                className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
+              <Button isLoading={isLoading} onClick={handleSubmit}>
                 Say Thanks
-              </button>
+              </Button>
             </div>
-
-            {owner === user ? (
-              <div className="col-span-6 sm:col-span-6 lg:col-span-3">
-                <button
-                  onClick={handleTransfer}
-                  className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Transfer to owner (Me)
-                </button>
-              </div>
-            ) : null}
           </div>
         </div>
       </div>
-      {loading ? <loading can-cancel="true" is-full-page="fullPage" /> : null}
+      <div />
+      <div className="shadow overflow-hidden sm:rounded-md">
+        <div className="px-4 py-5 bg-white sm:p-6">
+          {user && owner === user ? (
+            <div className="flex flex-col items-center">
+              <Button isLoading={isLoading} onClick={handleTransfer}>
+                Transfer to owner (Me)
+              </Button>
+              <div className="grid grid-cols-2 gap-2 mt-4">
+                {summarize
+                  ? summarize.map(([key, value]) => (
+                      <>
+                        <span className="text-right">{key}:</span>
+                        <span className="text-left">{value}</span>
+                      </>
+                    ))
+                  : null}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
     </>
   );
 };

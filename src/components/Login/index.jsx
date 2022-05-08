@@ -1,22 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { wallet } from '../../services/near';
 import { ChangeContract } from './ChangeContract';
+import { useToasts } from 'react-toast-notifications';
 import { useContract } from '../../context/ContractsProvider';
 import { UserIcon, LogoutIcon } from '@heroicons/react/outline';
 
-export const Login = ({ user, setUser, error, setApiError }) => {
+export const Login = ({ error, setApiError }) => {
   const {
     data: { contractId },
+    user,
+    setUser,
+    signOut,
   } = useContract();
+
+  const { addToast } = useToasts();
 
   const [isOpenChangeContact, setIsOpenChangeContact] = useState(false);
 
-  const signIn = () => wallet.requestSignIn(contractId);
-
-  const signOut = () => {
-    wallet.signOut();
-    localStorage.removeItem(`near-api-js:keystore:${user}:testnet`);
-    setUser(null);
+  const signIn = async () => {
+    try {
+      await wallet.requestSignIn(contractId);
+    } catch (error) {
+      addToast(error.message, {
+        appearance: 'error',
+        autoDismiss: true,
+        autoDismissTimeout: 30000,
+      });
+    }
   };
 
   useEffect(() => {

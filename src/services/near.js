@@ -1,5 +1,5 @@
 // import BN from 'bn.js';
-import { keyStores, Near, WalletConnection, utils } from 'near-api-js';
+import { keyStores, Near, WalletConnection, utils, Contract } from 'near-api-js';
 
 // const gas = new BN('70000000000000');
 
@@ -11,38 +11,39 @@ export const near = new Near({
   walletUrl: 'https://wallet.testnet.near.org',
 });
 
-export const wallet = new WalletConnection(near, 'thankyou');
+export const wallet = new WalletConnection(near, localStorage.getItem('REGISTRY_CONTRACT_ID'));
+
+export const contract = () =>
+  new Contract(wallet.account(), localStorage.getItem('CONTRACT_ID'), {
+    viewMethods: ['get_owner'],
+    changeMethods: ['list', 'transfer', 'summarize', 'say'],
+    sender: wallet.account(),
+  });
+
+export const registryContract = () =>
+  new Contract(wallet.account(), localStorage.getItem('REGISTRY_CONTRACT_ID'), {
+    viewMethods: ['list_all'],
+    changeMethods: [],
+    sender: wallet.account(),
+  });
 
 //function to get all recipients from registry contract
-export const getRecipients = () => {
-  const REGISTRY_CONTRACT_ID = localStorage.getItem('REGISTRY_CONTRACT_ID');
-  return wallet.account().viewFunction(REGISTRY_CONTRACT_ID, 'list_all');
-};
+export const getRecipients = registryContract().list_all;
 
 //function to get all messages from thankyou contract
-export const getMessages = () => {
-  const CONTRACT_ID = localStorage.getItem('CONTRACT_ID');
-  return wallet.account().viewFunction(CONTRACT_ID, 'list');
-};
+export const getMessages = contract().list;
 
-export const getOwner = () => {
-  const CONTRACT_ID = localStorage.getItem('CONTRACT_ID');
-  return wallet.account().viewFunction(CONTRACT_ID, 'get_owner');
-};
+export const getOwner = contract().get_owner;
+
+export const getSummarize = contract().summarize;
 
 //function to transfer funds to  owner
-export const transfer = () => {
-  const CONTRACT_ID = localStorage.getItem('CONTRACT_ID');
-  return wallet.account().viewFunction(CONTRACT_ID, 'transfer');
-};
+export const transfer = contract().transfer;
 
 //function to sendMessage
 export const sendMessage = ({ message, anonymous, attachedDeposit }) => {
-  const CONTRACT_ID = localStorage.getItem('CONTRACT_ID');
-  attachedDeposit = utils.format.parseNearAmount(attachedDeposit);
-  return wallet.account().functionCall({
-    contractId: CONTRACT_ID,
-    methodName: 'say',
+  attachedDeposit = utils.format.parseNearAmount(attachedDeposit.toString());
+  return contract().say({
     args: { message, anonymous },
     attachedDeposit: attachedDeposit,
   });
