@@ -1,7 +1,7 @@
-// import BN from 'bn.js';
+import BN from 'bn.js';
 import { keyStores, Near, WalletConnection, utils, Contract } from 'near-api-js';
 
-// const gas = new BN('70000000000000');
+const gas = new BN('70000000000000');
 
 // new NEAR is using  here to  avoid  async/await
 export const near = new Near({
@@ -42,9 +42,10 @@ export const transfer = contract().transfer;
 
 //function to sendMessage
 export const sendMessage = ({ message, anonymous, attachedDeposit }) => {
-  attachedDeposit = utils.format.parseNearAmount(attachedDeposit.toString());
-  return contract().say({
-    args: { message, anonymous },
-    attachedDeposit: attachedDeposit,
-  });
+  attachedDeposit = utils.format.parseNearAmount(attachedDeposit);
+  if (attachedDeposit) {
+    return contract().say({ message, anonymous }, gas, attachedDeposit);
+  } else {
+    return contract().say({ message, anonymous });
+  }
 };

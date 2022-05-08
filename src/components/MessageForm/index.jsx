@@ -17,7 +17,7 @@ export const MessageForm = ({ user, recipients, owner }) => {
   const [isLoading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [anonymous, setAnonymous] = useState(false);
-  const [attachedDeposit, setAttachedDeposit] = useState(0);
+  const [attachedDeposit, setAttachedDeposit] = useState();
   const [summarize, setSummarize] = useState(null);
   const [selectItem, setSelectItem] = useState(recipients.find((item) => item.value === contractId));
 
@@ -39,7 +39,7 @@ export const MessageForm = ({ user, recipients, owner }) => {
         setAttachedDeposit(0);
       } catch (error) {
         const errorMessage = error?.kind?.ExecutionError;
-        addToast(errorMessage.slice(0, errorMessage.match(/, filename/).index), {
+        addToast(errorMessage?.slice(0, errorMessage.match(/, filename/).index), {
           appearance: 'error',
           autoDismiss: true,
           autoDismissTimeout: 30000,
@@ -51,7 +51,7 @@ export const MessageForm = ({ user, recipients, owner }) => {
     }
   };
 
-  const formatDeposit = (value) => (value > 0 ? (value < 5 ? parseInt(value) : 5) : 0);
+  const formatDeposit = (value) => (value > 0 ? (value < 5 ? parseInt(value)?.toString() : 5) : 0);
 
   const handleTransfer = async () => {
     setLoading(true);
@@ -161,7 +161,7 @@ export const MessageForm = ({ user, recipients, owner }) => {
                 </div>
                 <input
                   type="text"
-                  onChange={(e) => setAttachedDeposit(e.target.value.replace(',', '.'))}
+                  onChange={(e) => setAttachedDeposit(e.target.value?.replace(',', '.'))}
                   onBlur={(e) => setAttachedDeposit(formatDeposit(e.target.value))}
                   value={attachedDeposit}
                   id="tip"
@@ -185,9 +185,9 @@ export const MessageForm = ({ user, recipients, owner }) => {
         </div>
       </div>
       <div />
-      <div className="shadow overflow-hidden sm:rounded-md">
-        <div className="px-4 py-5 bg-white sm:p-6">
-          {user && owner === user ? (
+      {user && owner === user ? (
+        <div className="shadow overflow-hidden sm:rounded-md">
+          <div className="px-4 py-5 bg-white sm:p-6">
             <div className="flex flex-col items-center">
               <Button isLoading={isLoading} onClick={handleTransfer}>
                 Transfer to owner (Me)
@@ -203,9 +203,9 @@ export const MessageForm = ({ user, recipients, owner }) => {
                   : null}
               </div>
             </div>
-          ) : null}
+          </div>
         </div>
-      </div>
+      ) : null}
     </>
   );
 };
