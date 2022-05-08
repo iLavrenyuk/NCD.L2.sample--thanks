@@ -30,6 +30,11 @@ export const MessageForm = ({ user, recipients, owner }) => {
           anonymous,
           attachedDeposit: formatDeposit(attachedDeposit),
         });
+        addToast(`Message sent`, {
+          appearance: 'success',
+          autoDismiss: true,
+          autoDismissTimeout: 30000,
+        });
         setMessage('');
         setAttachedDeposit(0);
       } catch (error) {
@@ -117,6 +122,7 @@ export const MessageForm = ({ user, recipients, owner }) => {
               </label>
               <textarea
                 onChange={(e) => setMessage(e.target.value)}
+                value={message}
                 rows="4"
                 id="message"
                 autoComplete={message}
