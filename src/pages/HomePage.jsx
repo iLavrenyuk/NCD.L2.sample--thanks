@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Info } from '../components/Info';
 import { Login } from '../components/Login';
 import { Header } from '../components/Header/index';
+import { Summarize } from '../components/Summarize';
 import { MessageForm } from '../components/MessageForm';
 import { LearnSection } from '../components/LearnSection';
 import { useContract } from '../context/ContractsProvider';
@@ -78,7 +79,7 @@ export const HomePage = () => {
               />
             ) : null}
           </div>
-
+          <Summarize user={user} owner={owner} />
           <svg
             className="hidden lg:block absolute right-full transform translate-x-1/2 translate-y-12"
             width="404"
@@ -103,7 +104,7 @@ export const HomePage = () => {
           </svg>
 
           <div className="relative mt-12 sm:mt-16 lg:mt-24">
-            <div className="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:gap-8 lg:items-center">
+            <div className="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:gap-8 lg:items-start">
               <LearnSection />
               <MessageHistory isOwner={user && user === owner} />
             </div>

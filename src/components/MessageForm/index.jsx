@@ -1,12 +1,12 @@
 import Select from 'react-select';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '../Button';
 import { Switch } from '@headlessui/react';
 import { useToasts } from 'react-toast-notifications';
+import { sendMessage, wallet } from '../../services/near';
 import { useContract } from '../../context/ContractsProvider';
-import { getSummarize, sendMessage, transfer, wallet } from '../../services/near';
 
-export const MessageForm = ({ user, recipients, owner }) => {
+export const MessageForm = ({ user, recipients }) => {
   const {
     data: { contractId },
     setContracts,
@@ -18,7 +18,6 @@ export const MessageForm = ({ user, recipients, owner }) => {
   const [message, setMessage] = useState('');
   const [anonymous, setAnonymous] = useState(false);
   const [attachedDeposit, setAttachedDeposit] = useState();
-  const [summarize, setSummarize] = useState(null);
   const [selectItem, setSelectItem] = useState(recipients.find((item) => item.value === contractId));
 
   const handleSubmit = async () => {
@@ -53,43 +52,10 @@ export const MessageForm = ({ user, recipients, owner }) => {
 
   const formatDeposit = (value) => (value > 0 ? (value < 5 ? parseInt(value)?.toString() : 5) : 0);
 
-  const handleTransfer = async () => {
-    setLoading(true);
-    try {
-      const res = await transfer();
-      addToast(`Transfer success \n ${res}`, {
-        appearance: 'success',
-        autoDismiss: true,
-        autoDismissTimeout: 30000,
-      });
-    } catch (error) {
-      const errorMessage = error?.kind?.ExecutionError;
-      addToast(errorMessage.slice(0, errorMessage.match(/, filename/).index), {
-        appearance: 'error',
-        autoDismiss: true,
-        autoDismissTimeout: 30000,
-      });
-    }
-    setLoading(false);
-  };
-
   const handleChange = (e) => {
     setSelectItem(e);
     setContracts(e.value);
   };
-
-  const getData = async () => {
-    try {
-      const res = await getSummarize();
-      setSummarize(Object.entries(res?.contributions));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    user && owner === user && getData();
-  }, [owner, user]);
 
   return (
     <>
@@ -185,27 +151,6 @@ export const MessageForm = ({ user, recipients, owner }) => {
         </div>
       </div>
       <div />
-      {user && owner === user ? (
-        <div className="shadow overflow-hidden sm:rounded-md">
-          <div className="px-4 py-5 bg-white sm:p-6">
-            <div className="flex flex-col items-center">
-              <Button isLoading={isLoading} onClick={handleTransfer}>
-                Transfer to owner (Me)
-              </Button>
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                {summarize
-                  ? summarize.map(([key, value]) => (
-                      <>
-                        <span className="text-right">{key}:</span>
-                        <span className="text-left">{value}</span>
-                      </>
-                    ))
-                  : null}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </>
   );
 };
