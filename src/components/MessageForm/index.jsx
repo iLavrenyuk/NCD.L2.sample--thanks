@@ -50,7 +50,7 @@ export const MessageForm = ({ user, recipients }) => {
     }
   };
 
-  const formatDeposit = (value) => (value > 0 ? (value < 5 ? parseInt(value)?.toString() : 5) : 0);
+  const formatDeposit = (value) => (value > 0 ? (value < 5 ? value : 5) : 0);
 
   const handleChange = (e) => {
     setSelectItem(e);

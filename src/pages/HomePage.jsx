@@ -24,6 +24,8 @@ export const HomePage = () => {
       setRecipients(await getRecipients());
       setOwner(await getOwner());
     } catch (e) {
+      setRecipients([]);
+      setOwner('');
       setApiError(e);
       console.error(e);
     }

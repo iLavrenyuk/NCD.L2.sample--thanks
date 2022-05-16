@@ -42,7 +42,7 @@ export const transfer = contract().transfer;
 
 //function to sendMessage
 export const sendMessage = ({ message, anonymous, attachedDeposit }) => {
-  attachedDeposit = utils.format.parseNearAmount(attachedDeposit);
+  attachedDeposit = utils.format.parseNearAmount(attachedDeposit.toString());
   if (attachedDeposit) {
     return contract().say({ message, anonymous }, gas, attachedDeposit);
   } else {
