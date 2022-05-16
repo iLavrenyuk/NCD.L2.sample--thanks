@@ -20,12 +20,13 @@ export const ContractsProvider = ({ children }) => {
   const [user, setUser] = useState();
 
   const signOut = () => {
-    wallet.signOut();
+    wallet().signOut();
     localStorage.removeItem(`near-api-js:keystore:${user}:testnet`);
     setUser(null);
   };
 
   const setContracts = (contractId, registryContractId) => {
+    contractId !== localStorage.getItem('CONTRACT_ID') && signOut();
     localStorage.setItem('CONTRACT_ID', contractId);
     registryContractId && localStorage.setItem('REGISTRY_CONTRACT_ID', registryContractId);
     setData({ registryContractId: registryContractId || data.registryContractId, contractId });

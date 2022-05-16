@@ -46,7 +46,7 @@ export const MessageForm = ({ user, recipients }) => {
       }
       setLoading(false);
     } else {
-      wallet.requestSignIn(contractId);
+      wallet().requestSignIn(contractId);
     }
   };
 

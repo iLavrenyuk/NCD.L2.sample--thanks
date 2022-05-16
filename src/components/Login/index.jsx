@@ -19,7 +19,7 @@ export const Login = ({ error, setApiError }) => {
 
   const signIn = async () => {
     try {
-      await wallet.requestSignIn(contractId);
+      await wallet().requestSignIn(contractId);
     } catch (error) {
       addToast(error.message, {
         appearance: 'error',
@@ -30,9 +30,9 @@ export const Login = ({ error, setApiError }) => {
   };
 
   useEffect(() => {
-    const userData = wallet.getAccountId();
+    const userData = wallet().getAccountId();
     setUser(userData);
-  }, [setUser]);
+  }, [setUser, contractId]);
 
   return (
     <div className="px-5 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
