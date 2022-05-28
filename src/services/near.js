@@ -4,14 +4,14 @@ import { keyStores, Near, WalletConnection, utils, Contract } from 'near-api-js'
 const gas = new BN('70000000000000');
 
 // new NEAR is using  here to  avoid  async/await
-const near = new Near({
+const config = new Near({
   networkId: 'testnet',
   keyStore: new keyStores.BrowserLocalStorageKeyStore(),
   nodeUrl: 'https://rpc.testnet.near.org',
   walletUrl: 'https://wallet.testnet.near.org',
 });
 
-export const wallet = () => new WalletConnection(near, localStorage.getItem('REGISTRY_CONTRACT_ID'));
+export const wallet = () => new WalletConnection(config, localStorage.getItem('REGISTRY_CONTRACT_ID'));
 
 export const thanksContract = () =>
   new Contract(wallet().account(), localStorage.getItem('CONTRACT_ID'), {
